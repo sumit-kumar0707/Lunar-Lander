@@ -1,0 +1,45 @@
+name: Train Lunar Lander Agent
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow when changes are pushed to the main branch
+  workflow_dispatch:  # Allow manual triggering of the workflow from the GitHub UI
+
+jobs:
+  train:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu environment
+
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'  # Use Python 3.8
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install gymnasium numpy pygame
+
+      # Step 4: Train the agent
+      - name: Train the agent
+        run: |
+          python train_agent.py --train --filename best_policy.npy
+
+      # Step 5: Evaluate the trained agent
+      - name: Evaluate the agent
+        run: |
+          python evaluate_agent.py --filename best_policy.npy --policy_module my_policy
+
+      # Step 6: Upload the trained policy as an artifact
+      - name: Upload trained policy
+        uses: actions/upload-artifact@v3
+        with:
+          name: best_policy
+          path: best_policy.npy
