@@ -135,3 +135,4 @@ if __name__ == "__main__":
             play_policy(best_params, episodes=5)
     else:
         print("Please specify --train to train and save a policy, or --play to load and play the best policy.")
+        # exit
